@@ -55,6 +55,26 @@ add_custom_command(TARGET gnuefi
         COMMENT "build gnu-efi..."
         )
 
+# posix-uefi
+add_custom_target(posixuefi)
+add_custom_command(TARGET posixuefi
+        POST_BUILD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rd/posix-uefi/uefi
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/3rd/posix-uefi
+        COMMAND
+        USE_GCC=1
+        ARCH=${ARCH}
+        make
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/3rd/posix-uefi/build/uefi/crt0.o ${CMAKE_BINARY_DIR}/3rd/posix-uefi
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/3rd/posix-uefi/build/uefi/libuefi.a ${CMAKE_BINARY_DIR}/3rd/posix-uefi
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/3rd/posix-uefi/build/uefi/uefi.h ${CMAKE_BINARY_DIR}/3rd/posix-uefi
+        COMMAND
+        make clean
+        COMMAND
+        rm -rf ${CMAKE_SOURCE_DIR}/3rd/posix-uefi/build
+        COMMENT "build gnu-efi..."
+        )
+
 add_custom_target(kernel_pre)
 if (ARCH STREQUAL "riscv64")
     add_custom_command(TARGET kernel_pre
@@ -64,8 +84,9 @@ if (ARCH STREQUAL "riscv64")
 
 elseif (ARCH STREQUAL "x86_64")
     add_custom_command(TARGET kernel_pre
-            DEPENDS gnuefi
+            DEPENDS gnuefi posixuefi
             COMMAND make gnuefi
+            COMMAND make posixuefi
             )
 
 elseif (ARCH STREQUAL "aarch64")
@@ -76,7 +97,6 @@ elseif (ARCH STREQUAL "aarch64")
 
 endif ()
 
-
 # 内核本体
 ExternalProject_Add(
         kernel
@@ -86,26 +106,27 @@ ExternalProject_Add(
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/src
         BINARY_DIR ${CMAKE_BINARY_DIR}/src
         CMAKE_ARGS
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_SOURCE_DIR}/cmake/${ARCH}-${CMAKE_HOST_SYSTEM_PROCESSOR}.cmake
-        -DMACHINE=${MACHINE}
-        -DARCH=${ARCH}
+        -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
         -DCMAKE_C_COMPILER_WORKS=${CMAKE_C_COMPILER_WORKS}
         -DCMAKE_CXX_COMPILER_WORKS=${CMAKE_CXX_COMPILER_WORKS}
         -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=${CMAKE_FIND_ROOT_PATH_MODE_PROGRAM}
         -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=${CMAKE_FIND_ROOT_PATH_MODE_LIBRARY}
         -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=${CMAKE_FIND_ROOT_PATH_MODE_INCLUDE}
         -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=${CMAKE_FIND_ROOT_PATH_MODE_PACKAGE}
-        -DCMAKE_C_STANDARD=${CMAKE_C_STANDARD}
-        -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
-        -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
-        -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-        -DCMAKE_ASM_FLAGS=${CMAKE_ASM_FLAGS}
         -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
         -DCMAKE_LIBRARY_OUTPUT_DIRECTORY=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
         -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+        -DCMAKE_C_STANDARD=${CMAKE_C_STANDARD}
+        -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
+        -DMACHINE=${MACHINE}
+        -DARCH=${ARCH}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
+        -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+        -DCMAKE_ASM_FLAGS=${CMAKE_ASM_FLAGS}
+        -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+        -DUSE_GNU_UEFI=${USE_GNU_UEFI}
         -DKernelName=${KernelName}
         BUILD_COMMAND ${GENERATOR_COMMAND}
         INSTALL_COMMAND ""
@@ -171,6 +192,7 @@ add_custom_command(TARGET image_uefi
         COMMENT "Copying bootloader and kernel"
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/image/efi/boot
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/bin/*.efi ${CMAKE_BINARY_DIR}/image/efi/boot/
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/tools/startup.nsh ${CMAKE_BINARY_DIR}/image/startup.nsh
         )
 # 制作镜像
 add_custom_target(image DEPENDS image_uefi)

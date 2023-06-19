@@ -16,14 +16,6 @@ include(header_files)
 # 引入添加汇编文件函数
 include(find_asm_files)
 
-# 输出相关信息
-message("ARCH: ${ARCH}")
-message("CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
-message("CMAKE_C_COMPILER: ${CMAKE_C_COMPILER}")
-message("CMAKE_C_FLAGS:${CMAKE_C_FLAGS}")
-message("CMAKE_CXX_FLAGS:${CMAKE_CXX_FLAGS}")
-message("CMAKE_ASM_FLAGS:${CMAKE_ASM_FLAGS}")
-
 # 处理子目录下的 CMakeLists
 add_subdirectory(${CMAKE_SOURCE_DIR}/arch)
 add_subdirectory(${CMAKE_SOURCE_DIR}/kernel)
@@ -43,34 +35,38 @@ if (ARCH STREQUAL "riscv64")
 elseif (ARCH STREQUAL "x86_64")
     # 将各个子对象链接为内核文件
     add_executable(${KernelName}
-            ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/gnuefi/reloc_${ARCH}.o
-            #        ${CMAKE_SOURCE_DIR}/../3rd/posix-uefi/bin/crt0_${ARCH}.o
             $<TARGET_OBJECTS:arch>
             $<TARGET_OBJECTS:kernel>
             $<TARGET_OBJECTS:libc>
             $<TARGET_OBJECTS:libcxx>
             $<TARGET_OBJECTS:drv>
             )
-    link_libraries(${KernelName} PRIVATE
-            ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/lib/libefi.a
-            ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/gnuefi/libgnuefi.a
-            #        ${CMAKE_SOURCE_DIR}/../3rd/posix-uefi/bin/libuefi_${ARCH}.a
-            )
+    if (USE_GNU_UEFI STREQUAL "1")
+        target_link_libraries(${KernelName} PRIVATE
+                ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/gnuefi/crt0-efi-${ARCH}.o
+                ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/gnuefi/reloc_${ARCH}.o
+                ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/gnuefi/libgnuefi.a
+                ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/lib/libefi.a
+                )
+    else ()
+        target_link_libraries(${KernelName} PRIVATE
+                ${CMAKE_BINARY_DIR}/../3rd/posix-uefi/crt0.o
+                ${CMAKE_BINARY_DIR}/../3rd/posix-uefi/libuefi.a
+                )
+    endif ()
 elseif (ARCH STREQUAL "aarch64")
     # 将各个子对象链接为内核文件
     add_executable(${KernelName}
-            ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/gnuefi/reloc_${ARCH}.o
-            #        ${CMAKE_SOURCE_DIR}/../3rd/posix-uefi/bin/crt0_${ARCH}.o
             $<TARGET_OBJECTS:arch>
             $<TARGET_OBJECTS:kernel>
             $<TARGET_OBJECTS:libc>
             $<TARGET_OBJECTS:libcxx>
             $<TARGET_OBJECTS:drv>
             )
-    link_libraries(${KernelName} PRIVATE
+    target_link_libraries(${KernelName} PRIVATE
             ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/lib/libefi.a
             ${CMAKE_BINARY_DIR}/../3rd/gnu-efi/gnuefi/libgnuefi.a
-            #        ${CMAKE_SOURCE_DIR}/../3rd/posix-uefi/bin/libuefi_${ARCH}.a
+            #        ${CMAKE_SOURCE_DIR}/../3rd/posix-uefi/libuefi.a
             )
 endif ()
 
@@ -78,10 +74,10 @@ endif ()
 target_link_options(${KernelName} PRIVATE -T ${CMAKE_SOURCE_DIR}/arch/${ARCH}/link.ld)
 
 # 其它链接选项
-if (ARCH STREQUAL riscv64)
+if (ARCH STREQUAL "riscv64")
     target_link_options(${KernelName} PRIVATE -Wl,-melf64lriscv)
-elseif (ARCH STREQUAL x86_64)
+elseif (ARCH STREQUAL "x86_64")
     target_link_options(${KernelName} PRIVATE -Wl,-melf_x86_64)
-elseif (ARCH STREQUAL aarch64)
+elseif (ARCH STREQUAL "aarch64")
     target_link_options(${KernelName} PRIVATE -Wl,-maarch64elf)
 endif ()

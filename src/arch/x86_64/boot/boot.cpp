@@ -15,12 +15,16 @@
  */
 
 #include "cassert"
-#include "efi.h"
-#include "efilib.h"
-
-// #include "uefi.h"
-
 #include "kernel.h"
+
+#if USE_GNU_UEFI == 1
+#    include "efi.h"
+#    include "efilib.h"
+#else
+#    include "uefi.h"
+#endif
+
+#if USE_GNU_UEFI == 1
 
 /**
  * efi_main - The entry point for the EFI application
@@ -42,7 +46,21 @@ efi_main(EFI_HANDLE image, EFI_SYSTEM_TABLE* systemTable) {
     return EFI_SUCCESS;
 }
 
-// int main(int, char**){
-//     printf("1111\n");
-//     return 0;
-// }
+#else
+
+/**
+ * Dump memory at given address, should accept 0x prefixes from the command line
+ */
+extern "C" int main(int argc, char** argv) {
+    efi_physical_address_t address
+      = (argc < 2 ? (efi_physical_address_t)IM
+                  : (efi_physical_address_t)atol(argv[1]));
+
+    printf("%4D", address);
+
+    kernel_main();
+
+    return EFI_SUCCESS;
+}
+
+#endif
