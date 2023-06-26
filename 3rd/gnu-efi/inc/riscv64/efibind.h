@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-2.0+ OR BSD-2-Clause */
 /*
  * Copright (C) 2014 - 2015 Linaro Ltd.
  * Author: Ard Biesheuvel <ard.biesheuvel@linaro.org>
@@ -21,7 +22,7 @@
 // Basic EFI types of various widths
 //
 
-
+#include <stddef.h>
 
 typedef uint64_t                UINT64;
 typedef int64_t                 INT64;
@@ -31,15 +32,13 @@ typedef uint16_t                UINT16;
 typedef int16_t                 INT16;
 typedef uint8_t                 UINT8;
 typedef int8_t                  INT8;
-#ifndef __WCHAR_TYPE__
-#define __WCHAR_TYPE__          short
-#endif
-typedef __WCHAR_TYPE__          WCHAR;
+typedef wchar_t                 CHAR16;
+#define WCHAR                   CHAR16
 #ifndef BOOLEAN
 typedef uint8_t                 BOOLEAN;
 #endif
 #undef VOID
-#define VOID                    void
+typedef void                    VOID;
 typedef int64_t                 INTN;
 typedef uint64_t                UINTN;
 

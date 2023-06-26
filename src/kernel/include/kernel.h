@@ -10,7 +10,7 @@
  * @par change log:
  * <table>
  * <tr><th>Date<th>Author<th>Description
- * <tr><td>2021-09-18<td>digmouse233<td>迁移到 doxygen
+ * <tr><td>2021-09-18<td>Zone.N (Zone.Niuzh@hotmail.com)<td>迁移到 doxygen
  * </table>
  */
 
@@ -19,9 +19,8 @@
 
 /**
  * @brief 声明 kernel_main 用 C 方法编译
- * @note 这个函数不会返回
  */
-extern "C" void kernel_main(void* _systemtable);
+extern "C" int kernel_main(int, char**);
 
 /**
  * @brief 输出系统信息

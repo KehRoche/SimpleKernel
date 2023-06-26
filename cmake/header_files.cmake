@@ -1,8 +1,8 @@
 
 # This file is a part of Simple-XX/SimpleKernel
 # (https://github.com/Simple-XX/SimpleKernel).
-# Based on https://github.com/SynestiaOS/SynestiaOS
-# header_files.cmake for Simple-XX/SimpleKernel.
+#
+# header_files.txt for Simple-XX/SimpleKernel.
 # 将头文件路径添加到 Target 的搜索路径中
 
 function(target_include_arch_header_files Target)
@@ -25,7 +25,7 @@ function(target_include_gnu_efi_header_files Target)
 endfunction()
 
 function(target_include_posix_uefi_header_files Target)
-    target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/../3rd/posix-uefi/uefi)
+    target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/../../3rd/posix-uefi/uefi)
 endfunction()
 
 function(target_include_common_header_files Target)

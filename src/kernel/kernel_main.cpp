@@ -10,38 +10,26 @@
  * @par change log:
  * <table>
  * <tr><th>Date<th>Author<th>Description
- * <tr><td>2021-09-18<td>digmouse233<td>迁移到 doxygen
+ * <tr><td>2021-09-18<td>Zone.N (Zone.Niuzh@hotmail.com)<td>迁移到 doxygen
  * </table>
  */
 
-#include "common.h"
-#include "cstdint"
-#include "cstdio"
-#include "iostream"
 #include "kernel.h"
-#include "stdio.h"
-
-#include "efi.h"
-#include "efilib.h"
+#include "common.h"
+#include "iostream"
+#include "cstdio"
 
 /**
  * @brief 内核主要逻辑
- * @note 这个函数不会返回
  */
-void kernel_main(void* _systemtable) {
-#if defined(__x86_64__)
-    EFI_SYSTEM_TABLE* systemTable = (EFI_SYSTEM_TABLE*)_systemtable;
-    EFI_STATUS        status
-      = uefi_call_wrapper(systemTable->ConOut->OutputString, 2,
-                          systemTable->ConOut, L"Hello UEFI111!\n");
-#endif
-    // 显示基本信息
+int kernel_main(int, char**) {
     show_info();
+
     // 进入死循环
     while (1) {
         ;
     }
-    return;
+    return 0;
 }
 
 /**

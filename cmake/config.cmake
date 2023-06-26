@@ -49,7 +49,18 @@ if (NOT ARCH IN_LIST VALID_ARCH)
 endif ()
 
 # 指定要使用的 efi
+if (USE_GNU_UEFI STREQUAL "1")
+    set(UEFI_DEFINITIONS "USE_GNU_UEFI=${USE_GNU_UEFI} HAVE_USE_MS_ABI")
+else ()
+    set(UEFI_DEFINITIONS "USE_GNU_UEFI=${USE_GNU_UEFI} HAVE_USE_MS_ABI")
+endif ()
 message("USE_GNU_UEFI is: ${USE_GNU_UEFI}")
+
+# 添加预处理器定义
+set(COMPILE_DEFINITIONS_BOOT "${UEFI_DEFINITIONS}")
+set(COMPILE_DEFINITIONS_KERNEL "${UEFI_DEFINITIONS}")
+message("COMPILE_DEFINITIONS_BOOT is: ${COMPILE_DEFINITIONS_BOOT}")
+message("COMPILE_DEFINITIONS_KERNEL is: ${COMPILE_DEFINITIONS_KERNEL}")
 
 # 是否 debug，默认为 Debug
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -66,34 +77,39 @@ message("CMAKE_BUILD_TYPE is: ${CMAKE_BUILD_TYPE}")
 set(OPTIMIZE_FLAGS "-O0")
 
 # 通用编译选项
-set(COMMON_FLAGS "-Wall -Wextra \
--no-pie -nostdlib \
--fPIC -ffreestanding -fexceptions -fshort-wchar \
--DUSE_GNU_UEFI=${USE_GNU_UEFI}")
+set(COMMON_FLAGS
+        "-Wall -Wextra -nostdlib -ffreestanding -fexceptions -fshort-wchar"
+        )
 
 # 架构相关编译选项
 # @todo clang 交叉编译参数
 if (ARCH STREQUAL "riscv64")
     set(ARCH_FLAGS "-march=rv64imafdc")
 elseif (ARCH STREQUAL "x86_64")
-    set(ARCH_FLAGS "-march=corei7 -mtune=corei7 -m64 -mno-red-zone \
--z max-page-size=0x1000 \
--Wl,-shared -Wl,-Bsymbolic")
+    set(ARCH_FLAGS
+            "-march=corei7 -mtune=corei7 -m64 -mno-red-zone -z max-page-size=0x1000"
+            )
 elseif (ARCH STREQUAL "aarch64")
     set(ARCH_FLAGS "-march=armv8-a -mtune=cortex-a72")
 endif ()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OPTIMIZE_FLAGS} ${COMMON_FLAGS} ${ARCH_FLAGS} ${DEBUG_FLAGS}")
-message("CMAKE_C_FLAGS:${CMAKE_C_FLAGS}")
+set(CMAKE_C_FLAGS_KERNEL
+        "${DEBUG_FLAGS} ${OPTIMIZE_FLAGS} ${COMMON_FLAGS} ${ARCH_FLAGS} "
+        )
+
+set(CMAKE_C_FLAGS_BOOT
+        "${CMAKE_C_FLAGS_KERNEL} -no-pie -fPIC -Wl,-shared -Wl,-Bsymbolic"
+        )
 
 # 将编译选项同步到汇编
-set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS}")
-message("CMAKE_ASM_FLAGS:${CMAKE_ASM_FLAGS}")
+set(CMAKE_ASM_FLAGS_KERNEL "${CMAKE_C_FLAGS_KERNEL}")
+set(CMAKE_ASM_FLAGS_BOOT "${CMAKE_C_FLAGS_BOOT}")
 
 # 将编译选项同步到 c++
-set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} ${CMAKE_C_FLAGS} -fpermissive")
-message("CMAKE_CXX_FLAGS:${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS_KERNEL
+        "${CMAKE_C_FLAGS_KERNEL} -fpermissive")
+set(CMAKE_CXX_FLAGS_BOOT
+        "${CMAKE_C_FLAGS_BOOT} -fpermissive")
 
 # 设置构建使用的工具，默认为 make
 if (GENERATOR STREQUAL "ninja")
@@ -110,5 +126,8 @@ elseif (COMPILER STREQUAL "clang")
 endif ()
 message("CMAKE_TOOLCHAIN_FILE is: ${CMAKE_TOOLCHAIN_FILE}")
 
-# 设置内核名称
-set(KernelName kernel.elf)
+# 设置二进制文件名称
+set(BOOT_ELF_OUTPUT_NAME boot.elf)
+set(BOOT_EFI_OUTPUT_NAME boot.efi)
+set(KERNEL_ELF_OUTPUT_NAME kernel.elf)
+set(KERNEL_EFI_OUTPUT_NAME kernel.efi)
