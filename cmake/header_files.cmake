@@ -7,13 +7,6 @@
 
 function(target_include_arch_header_files Target)
     target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/arch/${ARCH})
-    if (ARCH STREQUAL "x86_64")
-        target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/arch/${ARCH}/port/include)
-    elseif (ARCH STREQUAL "riscv64")
-        target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/arch/${ARCH}/opensbi/include)
-    elseif (ARCH STREQUAL "aarch64")
-        target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/arch/${ARCH}/port/include)
-    endif ()
 endfunction()
 
 function(target_include_kernel_header_files Target)
@@ -33,6 +26,7 @@ function(target_include_common_header_files Target)
 endfunction()
 
 function(target_include_drv_header_files Target)
+    target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/drv/port/include)
     target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/drv/tui/include)
     target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/drv/uart/include)
     target_include_directories(${Target} PRIVATE ${CMAKE_SOURCE_DIR}/drv/opensbi/include)

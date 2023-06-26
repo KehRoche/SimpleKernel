@@ -20,7 +20,7 @@
 /**
  * @brief 声明 kernel_main 用 C 方法编译
  */
-extern "C" int kernel_main(int, char**);
+extern "C" int _start(int, char**);
 
 /**
  * @brief 输出系统信息

@@ -22,7 +22,7 @@
 /**
  * @brief 内核主要逻辑
  */
-int kernel_main(int, char**) {
+int _start(int, char**) {
     show_info();
 
     // 进入死循环
