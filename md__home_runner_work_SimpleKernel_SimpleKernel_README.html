@@ -91,50 +91,93 @@ $(document).ready(function(){initNavTree('md__home_runner_work_SimpleKernel_Simp
 boot</h1>
 <h2><a class="anchor" id="autotoc_md17"></a>
 本分支新增特性</h2>
-<p>基本的构建体系与辅助脚本，包括</p>
+<p>参考 <a href="https://github.com/MRNIU/cmake-kernel">MRNIU/cmake-kernel</a> 的构建系统，包括以下特性</p>
 <ul>
-<li><p class="startli">对不同体系结构的支持</p>
-<p class="startli">目前支持 x86_64，aarch64，riscv64 三种架构</p>
-<p class="startli">支持在 qemu 平台上运行</p>
-<p class="startli">支持在 x86_64 架构的 osx、win(wsl)、linux(ubuntu) 上编译运行</p>
-</li>
-<li><p class="startli">对 uefi 与 opensbi 的支持</p>
-<p class="startli">x86_64 与 aarch64 架构通过 uefi 进行引导</p>
-<p class="startli">riscv64 通过 opensbi 进行引导</p>
-</li>
-<li><p class="startli">对 qemu 的支持</p>
-<p class="startli">通过 qemu 进行模拟</p>
-</li>
-<li><p class="startli">对使用 qemu gdb 进行调试的支持</p>
-<p class="startli">通过生成内核调试符号、向 qemu 传递正确的参数，达到使用 gdb 进行调试，观察内核的目标</p>
-</li>
-<li><p class="startli">对 clion 的支持</p>
-<p class="startli">clion 的配置文件与用法</p>
-</li>
-<li><p class="startli">对第三方代码的支持</p>
-<p class="startli">用到的第三方库的自动下载、编译</p>
-</li>
-<li><p class="startli">对项目的约束</p>
-<p class="startli">代码规范、commit 规范</p>
+<li><p class="startli">[x] 对第三方依赖的支持/构建</p>
+<p class="startli">自动下载并编译第三方依赖</p>
+<p class="startli">自动生成相关 licence</p>
+<p class="startli">目前支持的第三方资源</p>
 </li>
 </ul>
-<p>编译参数的确定</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadCenter">第三方内容   </th><th class="markdownTableHeadCenter">描述   </th><th class="markdownTableHeadCenter">类型   </th><th class="markdownTableHeadCenter">正在使用    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyCenter"><a href="https://github.com/cpm-cmake/CPM.cmake">CPM</a>   </td><td class="markdownTableBodyCenter">cmake 包管理   </td><td class="markdownTableBodyCenter">cmake module   </td><td class="markdownTableBodyCenter">✔    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyCenter"><a href="https://github.com/TheLartians/CPMLicenses.cmake">CPMLicences.cmake</a>   </td><td class="markdownTableBodyCenter">为第三方包生成 licence   </td><td class="markdownTableBodyCenter">cmake module   </td><td class="markdownTableBodyCenter">✔    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyCenter"><a href="https://github.com/google/googletest">google/googletest</a>   </td><td class="markdownTableBodyCenter">测试   </td><td class="markdownTableBodyCenter">库   </td><td class="markdownTableBodyCenter">✔    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyCenter"><a href="https://github.com/amrayn/easyloggingpp">easylogingpp</a>   </td><td class="markdownTableBodyCenter">日志   </td><td class="markdownTableBodyCenter">库   </td><td class="markdownTableBodyCenter"></td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyCenter"><a href="https://github.com/rttrorg/rttr">rttr</a>   </td><td class="markdownTableBodyCenter">c++ 反射库，在设备驱动部分用   </td><td class="markdownTableBodyCenter">库   </td><td class="markdownTableBodyCenter"></td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyCenter"><a href="https://github.com/TheLartians/Format.cmake">Format.cmake</a>   </td><td class="markdownTableBodyCenter">代码格式化，支持 clang-format 与 cmake-format   </td><td class="markdownTableBodyCenter">cmake module   </td><td class="markdownTableBodyCenter"></td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyCenter"><a href="http://freeimage.sourceforge.net/">FreeImage</a>   </td><td class="markdownTableBodyCenter">图片渲染   </td><td class="markdownTableBodyCenter">库   </td><td class="markdownTableBodyCenter"></td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyCenter"><a href="https://www.freetype.org/">Freetype</a>   </td><td class="markdownTableBodyCenter">字体渲染   </td><td class="markdownTableBodyCenter">库   </td><td class="markdownTableBodyCenter"></td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyCenter"><a href="https://github.com/riscv-software-src/opensbi">opensbi</a>   </td><td class="markdownTableBodyCenter">riscv 引导   </td><td class="markdownTableBodyCenter">库   </td><td class="markdownTableBodyCenter">✔    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyCenter"><a href="https://sourceforge.net/projects/gnu-efi/">gnu-efi</a>   </td><td class="markdownTableBodyCenter">gnu uefi 引导   </td><td class="markdownTableBodyCenter">库   </td><td class="markdownTableBodyCenter">✔    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyCenter"><a href="SimpleKernel/3rd/ovmf">ovmf</a>   </td><td class="markdownTableBodyCenter">qemu 使用的 uefi 固件   </td><td class="markdownTableBodyCenter">bin   </td><td class="markdownTableBodyCenter">✔    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyCenter"><a href="https://github.com/tianocore/edk2">edk2</a>   </td><td class="markdownTableBodyCenter">构建 qemu 使用的 uefi 固件 ovmf   </td><td class="markdownTableBodyCenter">库   </td><td class="markdownTableBodyCenter"></td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyCenter"><a href="https://github.com/libcxxrt/libcxxrt">libcxxrt</a>   </td><td class="markdownTableBodyCenter">c++ 运行时支持   </td><td class="markdownTableBodyCenter">库   </td><td class="markdownTableBodyCenter">✔   </td></tr>
+</table>
 <ul>
-<li>汇总到 config.cmake</li>
+<li><p class="startli">[x] 文档生成</p>
+<p class="startli">使用 doxygen 从生成文档</p>
+</li>
+<li><p class="startli">[x] 构建内核</p>
+<p class="startli">生成内核 elf 文件</p>
+</li>
+<li><p class="startli">[x] 运行内核</p>
+<p class="startli">在 qemu 上运行内核</p>
+</li>
+<li><p class="startli">[x] 代码格式化</p>
+<p class="startli">格式化全部代码</p>
+</li>
+<li><p class="startli">[x] 测试</p>
+<p class="startli">单元测试 集成测试 系统测试</p>
+</li>
+<li><p class="startli">[x] CI</p>
+<p class="startli">github action、codecov</p>
+</li>
+<li><p class="startli">[x] 调试</p>
+<p class="startli">使用 make debug 等进入调试模式</p>
+</li>
 </ul>
 <p>从系统启动到进入内核</p>
 <ul>
 <li>x86_64，aarch64 通过 uefi 进行引导</li>
-<li>riscvf64 通过 opensbi 进行引导</li>
+<li>riscv64 通过 opensbi 进行引导</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md18"></a>
 已支持的全部特性</h2>
 <ul>
-<li>poxix-uefi</li>
-<li>gnu-efi</li>
-<li>x86_64</li>
-<li>aarch64</li>
-<li>uefi </li>
+<li><p class="startli">[x] build</p>
+<p class="startli">内核构建与调试</p>
+</li>
+<li><p class="startli">[x] doxygen</p>
+<p class="startli">基于 doxygen 的文档生成</p>
+</li>
+<li><p class="startli">[x] CI</p>
+<p class="startli">github action，github pages，code coverage，ut it st</p>
+</li>
+<li><p class="startli">[x] x86_64</p>
+<p class="startli">基于 gnu-efi 的 x86_64 uefi 引导</p>
+</li>
+<li><p class="startli">[x] riscv64</p>
+<p class="startli">基于 opensbi 的 riscv64 架构支持</p>
+</li>
+<li><p class="startli">[x] 3rd</p>
+<p class="startli">对依赖的第三方库的自动下载、编译 </p>
+</li>
 </ul>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
@@ -142,7 +185,7 @@ boot</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Sep 10 2023 01:43:08 for SimpleKernel by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Sun Sep 10 2023 05:50:25 for SimpleKernel by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
