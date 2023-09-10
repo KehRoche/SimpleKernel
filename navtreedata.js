@@ -44,9 +44,11 @@ var NAVTREE =
       [ "配置 ssh", "md_docker.html#autotoc_md14", null ],
       [ "配置 vscode", "md_docker.html#autotoc_md15", null ]
     ] ],
-    [ "boot", "md__home_runner_work_SimpleKernel_SimpleKernel_README.html", [
-      [ "本分支新增特性", "md__home_runner_work_SimpleKernel_SimpleKernel_README.html#autotoc_md17", null ],
-      [ "已支持的全部特性", "md__home_runner_work_SimpleKernel_SimpleKernel_README.html#autotoc_md18", null ]
+    [ "README", "md__home_runner_work_SimpleKernel_SimpleKernel_README.html", [
+      [ "boot", "md__home_runner_work_SimpleKernel_SimpleKernel_README.html#autotoc_md16", [
+        [ "本分支新增特性", "md__home_runner_work_SimpleKernel_SimpleKernel_README.html#autotoc_md17", null ],
+        [ "已支持的全部特性", "md__home_runner_work_SimpleKernel_SimpleKernel_README.html#autotoc_md18", null ]
+      ] ]
     ] ],
     [ "gnu_efi_test", "md__home_runner_work_SimpleKernel_SimpleKernel_test_system_test_gnu_efi_test_README.html", null ],
     [ "CLion 配置及使用", "md__home_runner_work_SimpleKernel_SimpleKernel_tools_Clion__xE4_xBD_xBF_xE7_x94_xA8_xE8_xAF_xB4_xE6_x98_x8E.html", [

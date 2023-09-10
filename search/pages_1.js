@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['clion_20配置及使用_199',['CLion 配置及使用',['../md__home_runner_work_SimpleKernel_SimpleKernel_tools_Clion__xE4_xBD_xBF_xE7_x94_xA8_xE8_xAF_xB4_xE6_x98_x8E.html',1,'']]]
+  ['gnu_5fefi_5ftest_199',['gnu_efi_test',['../md__home_runner_work_SimpleKernel_SimpleKernel_test_system_test_gnu_efi_test_README.html',1,'']]]
 ];
